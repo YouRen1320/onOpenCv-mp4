@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>圆头耄耋</title>
+    <script
+      async
+      src="https://docs.opencv.org/4.5.0/opencv.js"
+      onload="onOpenCvReady();"
+      onerror="onOpenCvError();"
+    ></script>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0; /* Optional: Set a background color */
+      }
+      canvas {
+        border: 1px solid black;
+        width: 100vw; /* Set canvas width to full viewport width */
+        height: auto; /* Maintain aspect ratio */
+      }
+    </style>
+    <script>
+      let cv;
+      let video;
+      let canvas;
+      let ctx;
+
+      function onOpenCvReady() {
+        console.log("OpenCV.js is ready.");
+        cv = window.cv;
+        init();
+      }
+
+      function onOpenCvError() {
+        console.error("Failed to load OpenCV.js");
+      }
+
+      function init() {
+        // Create video element
+        video = document.createElement("video");
+        video.src = "maodie.mp4"; // Ensure this path is correct
+        video.autoplay = true;
+        video.muted = true;
+        video.loop = true;
+        video.addEventListener("canplay", processVideo, false);
+        video.addEventListener("error", (e) => {
+          console.error("Video error:", e);
+        });
+
+        // Create canvas element to display results
+        canvas = document.createElement("canvas");
+        ctx = canvas.getContext("2d");
+        document.body.appendChild(canvas);
+
+        // Set canvas size to match the browser window
+        resizeCanvas();
+
+        // Try to play the video
+        video.play().catch((error) => {
+          console.error("Video play error:", error);
+        });
+      }
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth; // Set canvas width to window width
+        canvas.height = window.innerHeight; // Set canvas height to window height
+      }
+
+      function processVideo() {
+        if (video.paused || video.ended) {
+          return;
+        }
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw current frame on canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Read image data from canvas
+        let src = cv.imread(canvas);
+        let dst = new cv.Mat();
+        cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY, 0);
+        cv.GaussianBlur(src, src, new cv.Size(5, 5), 0, 0, cv.BORDER_DEFAULT);
+        cv.Canny(src, dst, 50, 150);
+        cv.imshow(canvas, dst);
+
+        // Release resources
+        src.delete();
+        dst.delete();
+
+        // Continue processing next frame
+        requestAnimationFrame(processVideo);
+      }
+
+      // Adjust canvas size on window resize
+      window.addEventListener("resize", resizeCanvas);
+    </script>
+  </head>
+  <body>
+    <!-- No loading message or video element -->
+  </body>
+</html>
