@@ -1,5 +1,8 @@
 # 圆头耄耋 - OpenCV.js 视频处理项目
 
+> [!IMPORTANT]
+> **已完成的历史演示，不再维护。** 本仓库只演示浏览器端 OpenCV.js Canny 边缘检测，内置视频用于复现实验，不是通用视频编辑器。代码与示例继续保留用于学习回顾。
+
 ## 项目简介
 
 这是一个基于OpenCV.js的Web视频处理应用程序，能够实时对视频进行边缘检测处理。项目使用纯HTML、CSS和JavaScript实现，无需后端服务器。
@@ -125,4 +128,4 @@ cv.Canny(src, dst, 50, 150);
 
 ## 贡献
 
-欢迎提交Issue和Pull Request来改进项目。 
+欢迎提交Issue和Pull Request来改进项目。
